@@ -1,3 +1,6 @@
+const remote = require('@electron/remote')
+const dialog = remote.dialog
+
 const form = document.getElementById('form')
 const input = document.getElementById('input')
 const title = document.getElementById('titles')
@@ -58,8 +61,20 @@ function addTodo(todo) {
     todoEl.addEventListener('contextmenu', (e) => {
       e.preventDefault()
 
-      todoEl.remove()
-      updateLS()
+      dialog.showMessageBox({ // 弹出对话框
+        type: 'info',
+        title: '提示',
+        message: '您确认删除该任务吗',
+        buttons: ['确定', '取消']
+      }).then(result => {
+        console.log(result.response)
+        // 返回值是上面的buttons的下标,代表点击了哪个按钮,根据按钮的下标做相应的操作
+        if (result.response == 0) {
+          todoEl.remove()
+          updateLS()
+        }
+      })
+
     })
 
     todosUL.appendChild(todoEl)

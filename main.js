@@ -8,7 +8,16 @@ function createWindow() {
     width: 800,
     height: 600, //长宽
     autoHideMenuBar: true, //只保留标题，不保留其他的选项卡部分,也是隐藏菜单栏意思
+    webPreferences: {
+      nodeIntegration: true,  // 配置这三个选项就可以实现在渲染进程使用nodejs的api调用
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
   })
+
+  // 使用remote模块
+  require('@electron/remote/main').initialize()
+  require("@electron/remote/main").enable(win.webContents)
 
   win.on('close', () => {
     // 从性能考虑,应该释放窗体这个变量,删除窗体引用
