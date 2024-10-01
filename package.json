@@ -1,0 +1,16 @@
+{
+  "name": "tomato-todo",
+  "version": "1.0.0",
+  "description": "一个使用番茄钟的TODO应用",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "lucas.qin",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^32.1.2"
+  }
+}
