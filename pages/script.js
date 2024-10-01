@@ -6,6 +6,34 @@ const input = document.getElementById('input')
 const title = document.getElementById('titles')
 const todosUL = document.getElementById('todos')
 const myAudio = document.getElementById('myAudio')
+const showCompleted = document.getElementById('showCompleted')
+
+showCompletedTodos()
+
+showCompleted.addEventListener('change', (e) => {
+  showCompletedTodos()
+})
+
+function showCompletedTodos(todoEl = null) {
+  let todos = document.querySelectorAll('li')
+
+  if (todoEl != null) {
+    console.log('设置信息: ', todoEl)
+    todos = [todoEl]
+  }
+
+  todos.forEach(todo => {
+    if (showCompleted.checked) {
+      todo.style.display = 'flex'
+    } else {
+      if (todo.classList.contains('completed')) {
+        todo.style.display = 'none'
+      } else {
+        todo.style.display = 'flex'
+      }
+    }
+  })
+}
 
 // 上一次的定时器
 let lastInterval = null
@@ -57,6 +85,7 @@ function addTodo(todo) {
 
     todoEl.addEventListener('click', () => {
       todoEl.classList.toggle('completed')
+      showCompletedTodos(todoEl)
       updateLS()
     })
 
