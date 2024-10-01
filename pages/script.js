@@ -41,7 +41,9 @@ function addTodo(todo) {
     todoEl.appendChild(todoSpan)
     todoEl.appendChild(todoBtn)
 
-    todoBtn.addEventListener('click', () => {
+    todoBtn.addEventListener('click', (event) => {
+      // 阻止事件冒泡
+      event.stopPropagation()
       form.style.display = 'none';
       title.innerText = '25:00';
       startCountdown(title, 25 * 60);
@@ -74,7 +76,6 @@ function addTodo(todo) {
           updateLS()
         }
       })
-
     })
 
     todosUL.appendChild(todoEl)
