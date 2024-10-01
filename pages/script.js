@@ -50,23 +50,23 @@ function addTodo(todo) {
 
     todoSpan.innerText = todoText
 
-    // todoEl.addEventListener('click', () => {
-    //   todoEl.classList.toggle('completed')
-    //   updateLS()
-    // })
+    todoEl.addEventListener('click', () => {
+      todoEl.classList.toggle('completed')
+      updateLS()
+    })
 
-    // todoEl.addEventListener('contextmenu', (e) => {
-    //   e.preventDefault()
+    todoEl.addEventListener('contextmenu', (e) => {
+      e.preventDefault()
 
-    //   todoEl.remove()
-    //   updateLS()
-    // })
+      todoEl.remove()
+      updateLS()
+    })
 
     todosUL.appendChild(todoEl)
 
     input.value = ''
 
-    // updateLS()
+    updateLS()
   }
 }
 
@@ -96,8 +96,7 @@ function startCountdown(element, seconds) {
 }
 
 function updateLS() {
-  todosEl = document.querySelectorAll('li')
-
+  todosEl = document.querySelectorAll('span')
   const todos = []
 
   todosEl.forEach(todoEl => {

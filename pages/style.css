@@ -70,6 +70,10 @@ form.completed {
 .todos li.completed {
     color: #b6b6b6;
     text-decoration: line-through;
+
+    button {
+        display: none;
+    }
 }
 
 .todos button {
