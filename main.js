@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron')
-
-
+// 使用remote模块
+require('@electron/remote/main').initialize()
 // 创建窗口
 function createWindow() {
   // 创建窗口(下面的配置在上面讲过了,这里就删掉了,只留下三个)
@@ -16,7 +16,6 @@ function createWindow() {
   })
 
   // 使用remote模块
-  require('@electron/remote/main').initialize()
   require("@electron/remote/main").enable(win.webContents)
 
   win.on('close', () => {
