@@ -4,6 +4,7 @@
   "description": "一个使用番茄钟的TODO应用",
   "main": "main.js",
   "scripts": {
+    "dev": "nodemon --exec 'electron .'",
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
