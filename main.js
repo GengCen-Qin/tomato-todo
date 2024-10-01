@@ -1,7 +1,8 @@
 const { app, BrowserWindow } = require('electron')
 
-// 当app准备好就执行创建一个窗口
-app.on('ready', () => {
+
+// 创建窗口
+function createWindow() {
   // 创建窗口(下面的配置在上面讲过了,这里就删掉了,只留下三个)
   let win = new BrowserWindow({
     width: 800,
@@ -15,4 +16,21 @@ app.on('ready', () => {
   })
 
   win.loadFile('./pages/index.html') // loadFile就是加载本地页面的,loadURL加载的是在线链接
+}
+
+
+
+// 当app准备好就执行创建一个窗口
+app.on('ready', () => {
+  createWindow()
+  // 监听应用被激活
+  app.on('activate', () => {
+    // 当应用激活后,窗口数量为0时,重新创建一个窗口(mac使用,在windows和Linux窗口为0直接退出了)
+    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+})
+/// 监听所有窗口都被关闭事件
+app.on('window-all-closed', () => {
+  // 不是mac系统就执行退出
+  if (process.platform !== 'darwin') app.quit()
 })
