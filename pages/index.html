@@ -7,13 +7,16 @@
     <title>Todo List</title>
   </head>
   <body>
-    <h1>todos</h1>
+    <h1 id="titles">todos</h1>
     <form id="form">
       <input type="text" class="input" id="input" placeholder="Enter your todo" autocomplete="off">
-
-      <ul class="todos" id="todos"></ul>
     </form>
+
+    <ul class="todos" id="todos"></ul>
+
     <small>Left click to toggle completed. <br> Right click to delete todo</small>
+
+    <audio id="myAudio"><source src="../public/music.wav"></audio>
 
     <script src="script.js"></script>
   </body>
