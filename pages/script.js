@@ -4,7 +4,8 @@ const dialog = remote.dialog
 const form = document.getElementById('form')
 const input = document.getElementById('input')
 const title = document.getElementById('titles')
-const todosUL = document.getElementById('todos')
+const todosToday = document.getElementById('todosToday')
+const todosBefore = document.getElementById('todosBefore')
 const myAudio = document.getElementById('myAudio')
 const showCompleted = document.getElementById('showCompleted')
 
@@ -18,7 +19,6 @@ function showCompletedTodos(todoEl = null) {
   let todos = document.querySelectorAll('li')
 
   if (todoEl != null) {
-    console.log('设置信息: ', todoEl)
     todos = [todoEl]
   }
 
@@ -52,12 +52,16 @@ form.addEventListener('submit', (e) => {
   addTodo()
 })
 
+// 添加todo
 function addTodo(todo) {
   let todoText = input.value
   let num = 0
+  let todoDate = new Date()
+
   if (todo) {
     todoText = todo.text.split('(')[0]
     num = todo.num
+    todoDate = new Date(todo.date)
   }
 
   if (todoText) {
@@ -84,6 +88,7 @@ function addTodo(todo) {
 
     todoSpan.innerText = `${todoText}(${num})`;
     todoSpan.dataset.num = num
+    todoSpan.dataset.date = todoDate
 
     todoEl.addEventListener('click', () => {
       todoEl.classList.toggle('completed')
@@ -100,7 +105,6 @@ function addTodo(todo) {
         message: '您确认删除该任务吗',
         buttons: ['确定', '取消']
       }).then(result => {
-        console.log(result.response)
         // 返回值是上面的buttons的下标,代表点击了哪个按钮,根据按钮的下标做相应的操作
         if (result.response == 0) {
           todoEl.remove()
@@ -109,7 +113,11 @@ function addTodo(todo) {
       })
     })
 
-    todosUL.appendChild(todoEl)
+    if (todoDate.toDateString() === new Date().toDateString()) {
+      todosToday.appendChild(todoEl);
+    } else {
+      todosBefore.appendChild(todoEl);
+    }
 
     input.value = ''
 
@@ -149,15 +157,12 @@ function updateLS() {
   const todos = []
 
   todosEl.forEach(todoEl => {
-    console.log('todoEl: ', todoEl)
-    console.log('todoEl.innerText: ', todoEl.innerText)
-    console.log('todoEl.num: ', todoEl.dataset.num)
     todos.push({
       text: todoEl.innerText,
       completed: todoEl.classList.contains('completed'),
-      num: todoEl.dataset.num
+      num: todoEl.dataset.num,
+      date: todoEl.dataset.date
     })
   })
-
   localStorage.setItem('todos', JSON.stringify(todos))
 }
