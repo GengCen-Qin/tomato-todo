@@ -60,7 +60,7 @@ form.completed {
 
 .todos li {
     border-top: 1px solid #e5e5e5;
-    font-size: 1.5rem;
+    font-size: 1rem;
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
@@ -78,7 +78,6 @@ form.completed {
 .todos button {
     border: none;
     color: black;
-    padding: 10px 20px;
     cursor: pointer;
 }
 
