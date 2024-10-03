@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 // 使用remote模块
 require('@electron/remote/main').initialize()
 // 创建窗口
@@ -15,6 +15,33 @@ function createWindow() {
     }
   })
 
+  // 创建菜单
+  const menuTemplate = [
+    {
+      label: '页面',
+      submenu: [
+        {
+          label: '任务页',
+          type: 'radio',
+          click: () => {
+            win.loadFile('./pages/index.html'); // 路由到任务页
+          },
+        },
+        {
+          label: '统计页',
+          type: 'radio',
+          click: () => {
+            win.loadFile('./pages/echart.html'); // 路由到统计页
+          },
+        },
+      ],
+    },
+  ];
+  // 2.依据上述的数据创建一个menu
+  let menu = Menu.buildFromTemplate(menuTemplate)
+  // 3.将上述菜单添加至app身上
+  Menu.setApplicationMenu(menu)
+
   // 使用remote模块
   require("@electron/remote/main").enable(win.webContents)
 
@@ -22,7 +49,6 @@ function createWindow() {
     // 从性能考虑,应该释放窗体这个变量,删除窗体引用
     win = null
   })
-
   win.loadFile('./pages/index.html') // loadFile就是加载本地页面的,loadURL加载的是在线链接
 }
 

@@ -1,7 +1,5 @@
 const remote = require('@electron/remote')
 const dialog = remote.dialog
-const echart = require('echarts')
-const myChart = echart.init(document.getElementById('echarts'));
 
 const form = document.getElementById('form')
 const input = document.getElementById('input')
@@ -102,11 +100,6 @@ function addTodo(todo) {
     todoSpan.dataset.date = todoDate
     todoSpan.dataset.completed = completed
 
-    // todoEl.addEventListener('click', () => {
-    //   todoEl.classList.toggle('completed')
-    //   showCompletedTodos(todoEl)
-    //   updateLS()
-    // })
     todoComplete.addEventListener(
       'change', (e) => {
         todoSpan.dataset.completed = e.target.checked
@@ -149,6 +142,7 @@ function addTodo(todo) {
   }
 }
 
+// 开启定时器
 function startCountdown(element, seconds, todoSpan) {
   if (lastInterval) {
     clearInterval(lastInterval)
@@ -167,7 +161,6 @@ function startCountdown(element, seconds, todoSpan) {
       todoSpan.dataset.num = parseInt(todoSpan.dataset.num) + 1
       todoSpan.innerText = `${todoSpan.innerText.split('(')[0]}(${todoSpan.dataset.num})`
       updateLS()
-      showEcharts()
       new window.Notification('时间到', {
         body: '您的番茄钟时间到了！',
       });
@@ -177,6 +170,7 @@ function startCountdown(element, seconds, todoSpan) {
   lastInterval = intervalId
 }
 
+// 更新本地存储
 function updateLS() {
   todosEl = document.querySelectorAll('span')
   const todos = []
@@ -191,55 +185,3 @@ function updateLS() {
   })
   localStorage.setItem('todos', JSON.stringify(todos))
 }
-
-// 展示统计图表
-function showEcharts() {
-  // 横坐标展示
-  const daysOfWeek = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-
-  // 获取今天是周几（0代表周日，1代表周一，以此类推）
-  const dayOfWeek = new Date().getDay()
-
-  // 指定图表的配置项和数据
-  var option = {
-    title: {
-      text: '番茄钟统计'
-    },
-    tooltip: {},
-    legend: {
-      data: ['番茄钟数量']
-    },
-    xAxis: {
-      data: [] // x轴的数据为这一周的每一天的日期
-    },
-    yAxis: {},
-    series: [
-      {
-        name: '番茄钟数量',
-        type: 'bar',
-        data: [] // y轴的数据为这一周的每一天的番茄钟数量
-      }
-    ]
-  };
-
-  // 从本地存储中获取 todos
-  const todos = JSON.parse(localStorage.getItem('todos')) || []
-
-  // 初始化一个数组来存储这一周的每一天的番茄钟数量
-  const completedTodosByDay = new Array(7).fill(0)
-
-  // 遍历 todos，统计每天完成的番茄钟数量
-  todos.forEach(todo => {
-    const day = new Date(todo.date).getDay()
-    completedTodosByDay[day] += todo.num
-  })
-
-  // 更新图表的数据
-  option.xAxis.data = daysOfWeek
-  option.series[0].data = completedTodosByDay
-
-  // 使用刚指定的配置项和数据显示图表。
-  myChart.setOption(option)
-}
-
-showEcharts()

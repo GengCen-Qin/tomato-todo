@@ -1,0 +1,75 @@
+<html>
+    <header>
+        <style>
+        background-color: #f5f5f5;
+        color: #444;
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        height: 100vh;
+        margin: 0;
+        </style>
+    </header>
+
+    <body>
+        <h1>统计页</h1>
+
+        <div id="echarts" style="width: 600px;height:400px;"></div>
+
+
+        <script>
+          const echart = require('echarts')
+          const myChart = echart.init(document.getElementById('echarts'));
+
+          // 横坐标展示
+          const daysOfWeek = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+
+          // 获取今天是周几（0代表周日，1代表周一，以此类推）
+          const dayOfWeek = new Date().getDay()
+
+          // 指定图表的配置项和数据
+          var option = {
+            title: {
+              text: '番茄钟统计'
+            },
+            tooltip: {},
+            legend: {
+              data: ['番茄钟数量']
+            },
+            xAxis: {
+              data: [] // x轴的数据为这一周的每一天的日期
+            },
+            yAxis: {},
+            series: [
+              {
+                name: '番茄钟数量',
+                type: 'bar',
+                data: [] // y轴的数据为这一周的每一天的番茄钟数量
+              }
+            ]
+          };
+
+          // 从本地存储中获取 todos
+          const todos = JSON.parse(localStorage.getItem('todos')) || []
+
+          // 初始化一个数组来存储这一周的每一天的番茄钟数量
+          const completedTodosByDay = new Array(7).fill(0)
+
+          // 遍历 todos，统计每天完成的番茄钟数量
+          todos.forEach(todo => {
+            const day = new Date(todo.date).getDay()
+
+            completedTodosByDay[day] += parseInt(todo.num)
+          })
+
+          // 更新图表的数据
+          option.xAxis.data = daysOfWeek
+          option.series[0].data = completedTodosByDay
+
+          // 使用刚指定的配置项和数据显示图表。
+          myChart.setOption(option)
+        </script>
+    </body>
+</html>
