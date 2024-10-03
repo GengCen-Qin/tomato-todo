@@ -1,10 +1,12 @@
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu, globalShortcut } = require('electron')
+
+let win = null
 // 使用remote模块
 require('@electron/remote/main').initialize()
 // 创建窗口
 function createWindow() {
   // 创建窗口(下面的配置在上面讲过了,这里就删掉了,只留下三个)
-  let win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600, //长宽
     autoHideMenuBar: true, //只保留标题，不保留其他的选项卡部分,也是隐藏菜单栏意思
@@ -61,6 +63,9 @@ app.on('ready', () => {
   app.on('activate', () => {
     // 当应用激活后,窗口数量为0时,重新创建一个窗口(mac使用,在windows和Linux窗口为0直接退出了)
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+  globalShortcut.register(process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I', () => {
+    win.webContents.openDevTools();
   })
 })
 /// 监听所有窗口都被关闭事件
