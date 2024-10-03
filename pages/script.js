@@ -57,10 +57,12 @@ function addTodo(todo) {
   let todoText = input.value
   let num = 0
   let todoDate = new Date()
+  let completed = false
 
   if (todo) {
     todoText = todo.text.split('(')[0]
     num = todo.num
+    completed = todo.completed
     todoDate = new Date(todo.date)
   }
 
@@ -69,11 +71,17 @@ function addTodo(todo) {
     const todoSpan = document.createElement('span')
     const todoBtn = document.createElement('button')
 
+    const todoComplete = document.createElement('input')
+    todoComplete.type = 'checkbox'
+    todoComplete.checked = completed
+
     todoBtn.innerText = '小番茄'
 
+    todoEl.appendChild(todoComplete)
     todoEl.appendChild(todoSpan)
     todoEl.appendChild(todoBtn)
 
+    // 番茄钟点击事件
     todoBtn.addEventListener('click', (event) => {
       // 阻止事件冒泡
       event.stopPropagation()
@@ -82,6 +90,7 @@ function addTodo(todo) {
       startCountdown(title, 25 * 60, todoSpan);
     })
 
+    // 设置完成样式
     if (todo && todo.completed) {
       todoEl.classList.add('completed')
     }
@@ -89,13 +98,23 @@ function addTodo(todo) {
     todoSpan.innerText = `${todoText}(${num})`;
     todoSpan.dataset.num = num
     todoSpan.dataset.date = todoDate
+    todoSpan.dataset.completed = completed
 
-    todoEl.addEventListener('click', () => {
-      todoEl.classList.toggle('completed')
-      showCompletedTodos(todoEl)
-      updateLS()
-    })
+    // todoEl.addEventListener('click', () => {
+    //   todoEl.classList.toggle('completed')
+    //   showCompletedTodos(todoEl)
+    //   updateLS()
+    // })
+    todoComplete.addEventListener(
+      'change', (e) => {
+        todoSpan.dataset.completed = e.target.checked
+        todoEl.classList.toggle('completed')
+        showCompletedTodos(todoEl)
+        updateLS()
+      }
+    )
 
+    // 任务右击删除
     todoEl.addEventListener('contextmenu', (e) => {
       e.preventDefault()
 
@@ -113,14 +132,17 @@ function addTodo(todo) {
       })
     })
 
+    // 区分历史任务
     if (todoDate.toDateString() === new Date().toDateString()) {
       todosToday.appendChild(todoEl);
     } else {
       todosBefore.appendChild(todoEl);
     }
 
+    // 输入框清空
     input.value = ''
 
+    // 更新本地存储
     updateLS()
   }
 }
@@ -159,7 +181,7 @@ function updateLS() {
   todosEl.forEach(todoEl => {
     todos.push({
       text: todoEl.innerText,
-      completed: todoEl.classList.contains('completed'),
+      completed: todoEl.dataset.completed,
       num: todoEl.dataset.num,
       date: todoEl.dataset.date
     })
