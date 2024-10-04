@@ -62,7 +62,7 @@ function addTodo(todo) {
   if (todo) {
     todoText = todo.text.split('(')[0]
     num = todo.num
-    completed = todo.completed
+    completed = todo.completed === 'true' ? true : false
     todoDate = new Date(todo.date)
   }
 
@@ -91,7 +91,7 @@ function addTodo(todo) {
     })
 
     // 设置完成样式
-    if (todo && todo.completed) {
+    if (todo && completed) {
       todoEl.classList.add('completed')
     }
 
