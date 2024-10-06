@@ -8,6 +8,12 @@ const todosToday = document.getElementById('todosToday')
 const todosBefore = document.getElementById('todosBefore')
 const myAudio = document.getElementById('myAudio')
 const showCompleted = document.getElementById('showCompleted')
+const myModal = document.getElementById('myModal')
+const editForm = document.getElementById('editForm')
+const editTitle = document.getElementById('editTitle')
+const editNote = document.getElementById('editNote')
+const saveBtn = document.getElementById('saveBtn')
+const cancelBtn = document.getElementById('cancelBtn')
 
 showCompletedTodos()
 
@@ -58,12 +64,14 @@ function addTodo(todo) {
   let num = 0
   let todoDate = new Date()
   let completed = false
+  let note = ''
 
   if (todo) {
     todoText = todo.text.split('(')[0]
     num = todo.num
     completed = todo.completed === 'true' ? true : false
     todoDate = new Date(todo.date)
+    note = todo.note || ''
   }
 
   if (todoText) {
@@ -77,9 +85,42 @@ function addTodo(todo) {
 
     todoBtn.innerText = '小番茄'
 
+    todoSpan.innerText = `${todoText}(${num})`;
+    todoSpan.dataset.num = num
+    todoSpan.dataset.date = todoDate
+    todoSpan.dataset.completed = completed
+    todoSpan.dataset.note = note
+
     todoEl.appendChild(todoComplete)
     todoEl.appendChild(todoSpan)
     todoEl.appendChild(todoBtn)
+
+    todoEl.addEventListener('click', (e) => {
+      myModal.style.display = 'block';
+      editTitle.value = todoText
+      editNote.value = note
+    })
+
+    cancelBtn.addEventListener('click', (e) => {
+      e.preventDefault()
+      myModal.style.display = 'none';
+      editTitle.value = ''
+      editNote.value = ''
+    })
+
+    saveBtn.addEventListener('click', function (e) {
+      e.preventDefault()
+      todoSpan.innerText = editTitle.value
+      todoSpan.dataset.note = editNote.value
+
+      myModal.style.display = 'none';
+      editTitle.value = ''
+      editNote.value = ''
+      updateLS()
+
+      // 刷新页面
+      location.reload()
+    })
 
     // 番茄钟点击事件
     todoBtn.addEventListener('click', (event) => {
@@ -94,11 +135,6 @@ function addTodo(todo) {
     if (todo && completed) {
       todoEl.classList.add('completed')
     }
-
-    todoSpan.innerText = `${todoText}(${num})`;
-    todoSpan.dataset.num = num
-    todoSpan.dataset.date = todoDate
-    todoSpan.dataset.completed = completed
 
     todoComplete.addEventListener(
       'change', (e) => {
@@ -180,7 +216,8 @@ function updateLS() {
       text: todoEl.innerText,
       completed: todoEl.dataset.completed,
       num: todoEl.dataset.num,
-      date: todoEl.dataset.date
+      date: todoEl.dataset.date,
+      note: todoEl.dataset.note
     })
   })
   localStorage.setItem('todos', JSON.stringify(todos))
