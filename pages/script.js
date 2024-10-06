@@ -95,7 +95,7 @@ function addTodo(todo) {
     todoEl.appendChild(todoSpan)
     todoEl.appendChild(todoBtn)
 
-    todoEl.addEventListener('click', (e) => {
+    todoSpan.addEventListener('click', (e) => {
       myModal.style.display = 'block';
       editTitle.value = todoText
       editNote.value = note
