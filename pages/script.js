@@ -1,5 +1,9 @@
+console.log('page render');
+
 const remote = require('@electron/remote')
 const dialog = remote.dialog
+
+const {v4: uuidv4} = require('uuid')
 
 const form = document.getElementById('form')
 const input = document.getElementById('input')
@@ -14,6 +18,8 @@ const editTitle = document.getElementById('editTitle')
 const editNote = document.getElementById('editNote')
 const saveBtn = document.getElementById('saveBtn')
 const cancelBtn = document.getElementById('cancelBtn')
+
+let currentEditTodoId = null
 
 showCompletedTodos()
 
@@ -45,7 +51,18 @@ function showCompletedTodos(todoEl = null) {
 let lastInterval = null
 
 // 序列化后的todos
-const todos = JSON.parse(localStorage.getItem('todos'))
+
+const todos = getTodos()
+
+function getTodos() {
+  // TODO: 允许使用文件系统存储
+  return JSON.parse(localStorage.getItem('todos'))
+}
+
+function getTodosById(id) {
+  let todos = getTodos()
+  return todos.find(item => item.id == id)
+}
 
 // 如果有todos，就添加到页面上
 if (todos) {
@@ -65,13 +82,16 @@ function addTodo(todo) {
   let todoDate = new Date()
   let completed = false
   let note = ''
+  // 设置唯一ID
+  let id = uuidv4();
 
   if (todo) {
-    todoText = todo.text.split('(')[0]
+    todoText = todo.text
     num = todo.num
     completed = todo.completed === 'true' ? true : false
     todoDate = new Date(todo.date)
     note = todo.note || ''
+    id = todo.id || uuidv4()
   }
 
   if (todoText) {
@@ -90,6 +110,8 @@ function addTodo(todo) {
     todoSpan.dataset.date = todoDate
     todoSpan.dataset.completed = completed
     todoSpan.dataset.note = note
+    todoSpan.dataset.id = id
+    todoSpan.dataset.text = todoText
 
     todoEl.appendChild(todoComplete)
     todoEl.appendChild(todoSpan)
@@ -97,8 +119,12 @@ function addTodo(todo) {
 
     todoSpan.addEventListener('click', (e) => {
       myModal.style.display = 'block';
-      editTitle.value = todoText
-      editNote.value = note
+      currentEditTodoId = id
+      console.log('当前展示ID: ', id);
+
+      tmp_node = getTodosById(id)
+      editTitle.value = tmp_node.text
+      editNote.value = tmp_node.note
     })
 
     cancelBtn.addEventListener('click', (e) => {
@@ -106,17 +132,17 @@ function addTodo(todo) {
       myModal.style.display = 'none';
       editTitle.value = ''
       editNote.value = ''
+      currentEditTodoId = null
     })
 
     saveBtn.addEventListener('click', function (e) {
       e.preventDefault()
-      todoSpan.innerText = editTitle.value
-      todoSpan.dataset.note = editNote.value
 
-      myModal.style.display = 'none';
-      editTitle.value = ''
-      editNote.value = ''
-      updateLS()
+      let todos = getTodos()
+      current = todos.find(element => element.id == currentEditTodoId)
+      current.text = editTitle.value
+      current.note = editNote.value
+      setTodos(todos)
 
       // 刷新页面
       location.reload()
@@ -208,17 +234,24 @@ function startCountdown(element, seconds, todoSpan) {
 
 // 更新本地存储
 function updateLS() {
-  todosEl = document.querySelectorAll('span')
+  let todosEl = document.querySelectorAll('span')
+  console.log('updat data: ', todosEl)
   const todos = []
 
   todosEl.forEach(todoEl => {
     todos.push({
-      text: todoEl.innerText,
+      text: todoEl.dataset.text,
       completed: todoEl.dataset.completed,
       num: todoEl.dataset.num,
       date: todoEl.dataset.date,
-      note: todoEl.dataset.note
+      note: todoEl.dataset.note,
+      id: todoEl.dataset.id
     })
   })
+  setTodos(todos)
+}
+
+function setTodos(todos) {
+  console.log('set-todos: ', todos);
   localStorage.setItem('todos', JSON.stringify(todos))
 }
